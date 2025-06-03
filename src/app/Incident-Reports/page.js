@@ -24,16 +24,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const CarePlans = [
-    {
-        Date: "02/21/2222",
-        Client: "Noman Developer",
-        Type: "Medication Error",
-        Severity: "Medium",
-        ReportedBy: "Dr. Khan",
-        Status: "Open",
-    },
-];
+
 
 const Page = () => {
    
@@ -98,17 +89,28 @@ const Page = () => {
   }, []);
 
   // Filter incidents by status
-  useEffect(() => {
-    let filtered = [];
+useEffect(() => {
+  let filtered = [];
 
-    if (selected === 'All Incidents') {
-      filtered = incidentData;
-    } else {
-      filtered = incidentData.filter((item) => item.status === selected);
-    }
+  // Step 1: Status filter
+  if (selected === 'All Incidents') {
+    filtered = incidentData;
+  } else {
+    filtered = incidentData.filter((item) => item.status === selected);
+  }
 
-    setFilteredIncidents(filtered);
-  }, [selected, incidentData]);
+  // Step 2: Search filter (by client full name)
+  if (searchQuery.trim() !== '') {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter((item) => {
+      const clientName = staffMembers.find(staff => staff._id === item.client?._id)?.fullName || '';
+      return clientName.toLowerCase().includes(query);
+    });
+  }
+
+  setFilteredIncidents(filtered);
+}, [selected, incidentData, searchQuery, staffMembers]);
+
 
   const handleEdit = (incident) => {
     setFormData2({

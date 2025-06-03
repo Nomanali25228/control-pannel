@@ -167,16 +167,20 @@ toast.success("Add successfly")
 
   // Filter staff whenever searchQuery or selected changes
  useEffect(() => {
-  let filtered = [];
+  let filtered = StaffData;
 
-  if (selected === "All Clients") {
-    filtered = StaffData;
-  } else {
-    filtered = StaffData.filter((staff) => staff.careType === selected);
+  if (selected !== "All Clients") {
+    filtered = filtered.filter((staff) => staff.careType === selected);
+  }
+
+  if (searchQuery.trim()) {
+    filtered = filtered.filter((staff) =>
+      staff.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   }
 
   setFilteredStaff(filtered);
-}, [selected, StaffData]);
+}, [selected, StaffData, searchQuery]);
 
 
 
@@ -219,15 +223,6 @@ const { user, logout } = useAuth();
   }, [user ,router]);
 
   if (!user) return null;
-
-
-
-
-
-
-
-
-
 
 
   return (
@@ -332,7 +327,7 @@ const { user, logout } = useAuth();
                   </div>
                 </div>
                 <button  onClick={() => setShowModal(true)} className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center">
-                  <FaPlus className="mr-2" /> Create New Plan
+                  <FaPlus className="mr-2" /> Add New Client
                 </button>
               </div>
             </div>

@@ -321,7 +321,7 @@ const Page = () => {
     </nav>
   </aside>
 
-  
+
         <main className="flex-1 p-6">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">User Management</h2>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">

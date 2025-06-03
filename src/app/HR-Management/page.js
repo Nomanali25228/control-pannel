@@ -160,16 +160,24 @@ const Page = () => {
 
   // Filter staff whenever searchQuery or selected changes
   useEffect(() => {
-    let filtered = [];
+  let filtered = [];
 
-    if (selected === "All Staff") {
-      filtered = StaffData;
-    } else {
-      filtered = StaffData.filter((staff) => staff.department === selected);
-    }
+  if (selected === "All Staff") {
+    filtered = StaffData;
+  } else {
+    filtered = StaffData.filter((staff) => staff.department === selected);
+  }
 
-    setFilteredStaff(filtered);
-  }, [selected, StaffData]);
+  if (searchQuery.trim() !== "") {
+    const lowerSearch = searchQuery.toLowerCase();
+    filtered = filtered.filter(staff =>
+      staff.fullName.toLowerCase().includes(lowerSearch)
+    );
+  }
+
+  setFilteredStaff(filtered);
+}, [selected, StaffData, searchQuery]);
+
 
 
 

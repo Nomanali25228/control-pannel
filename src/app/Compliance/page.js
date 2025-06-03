@@ -172,17 +172,28 @@ const Page = () => {
   };
 
 
-  useEffect(() => {
-    let filtered = [];
+useEffect(() => {
+  let filtered = StaffData;
 
-    if (selected === "All Records") {
-      filtered = StaffData;
-    } else {
-      filtered = StaffData.filter((staff) => staff.status === selected);
-    }
+  // First filter based on selected status
+  if (selected !== "All Records") {
+    filtered = filtered.filter((staff) => staff.status === selected);
+  }
 
-    setFilteredStaff(filtered);
-  }, [selected, StaffData]);
+  // Then filter based on search query
+  if (searchQuery.trim() !== "") {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter((staff) =>
+      staff.requirement?.toLowerCase().includes(query) ||
+      staff.category?.toLowerCase().includes(query) ||
+      staff.status?.toLowerCase().includes(query) ||
+      staff.lastReviewDate?.toLowerCase().includes(query) ||
+      staff.nextReviewDate?.toLowerCase().includes(query)
+    );
+  }
+
+  setFilteredStaff(filtered);
+}, [selected, searchQuery, StaffData]);
 
 
 

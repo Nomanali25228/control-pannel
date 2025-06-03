@@ -173,14 +173,18 @@ useEffect(() => {
     setError(error.response?.data?.msg || 'Failed to fetch staff');
   });
 }, []);
+
 useEffect(() => {
   const filtered = carePlans.filter((plan) => {
-    if (selected === 'All Plans') return true;
-    return plan.planType === selected;
+    const client = staffMembers.find((staff) => staff._id === plan.client)?.fullName || '';
+    const matchesType = selected === 'All Plans' || plan.planType === selected;
+    const matchesSearch = client.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesType && matchesSearch;
   });
 
   setFilteredStaff(filtered);
-}, [selected, carePlans]);
+}, [selected, searchQuery, carePlans, staffMembers]);
+
 
 
 const { user, logout } = useAuth();
@@ -288,7 +292,7 @@ const { user, logout } = useAuth();
         onClick={() => setShowFormCare(true)}
         className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
       >
-        <FaPlus className="mr-2" /> Add New Client
+        <FaPlus className="mr-2" /> Create New Plan
       </button>
     </div>
   </div>

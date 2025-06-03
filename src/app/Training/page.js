@@ -173,25 +173,30 @@ const Page = () => {
   }, []);
 
   // Filter staff whenever searchQuery or selected changes
-  useEffect(() => {
-    const now = new Date();
+{/* Filtering Staff based on selection + searchQuery */}
+useEffect(() => {
+  const now = new Date();
 
-    const filtered = StaffData.filter((staff) => {
-      const expiry = staff.expiryDate ? new Date(staff.expiryDate) : null;
-      if (!expiry) return false;
+  const filtered = StaffData.filter((staff) => {
+    const expiry = staff.expiryDate ? new Date(staff.expiryDate) : null;
+    if (!expiry) return false;
 
-      const diffInDays = (expiry - now) / (1000 * 60 * 60 * 24);
+    const diffInDays = (expiry - now) / (1000 * 60 * 60 * 24);
+    const fullName = staff.staffMember?.fullName?.toLowerCase() || "";
 
-      if (selected === 'All Records') return true;
-      if (selected === 'Valid') return expiry > now && diffInDays > 30;
-      if (selected === 'Expiring Soon') return expiry > now && diffInDays <= 30;
-      if (selected === 'Expired') return expiry < now;
+    const matchesSelected =
+      selected === "All Records" ||
+      (selected === "Valid" && expiry > now && diffInDays > 30) ||
+      (selected === "Expiring Soon" && expiry > now && diffInDays <= 30) ||
+      (selected === "Expired" && expiry < now);
 
-      return true;
-    });
+    const matchesSearch = fullName.includes(searchQuery.toLowerCase());
 
-    setFilteredStaff(filtered);
-  }, [selected, StaffData]);
+    return matchesSelected && matchesSearch;
+  });
+
+  setFilteredStaff(filtered);
+}, [selected, StaffData, searchQuery]);
 
 
 
