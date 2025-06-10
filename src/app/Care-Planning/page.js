@@ -290,7 +290,7 @@ const { user, logout } = useAuth();
       </div>
       <button
         onClick={() => setShowFormCare(true)}
-        className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
+        className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
       >
         <FaPlus className="mr-2" /> Create New Plan
       </button>

@@ -81,12 +81,12 @@ function Navbar() {
                             <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user.fullName}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                         </div>
-                        <button
+                        <button onClick={handleLogout}
                             id="logout-button"
                             className=" cursor-pointer ml-4 text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex justify-center items-center"
                         >
                             <FaSignOutAlt/>
-                            <span className="hidden sm:inline ml-1" onClick={handleLogout}>Logout</span>
+                            <span className="hidden sm:inline ml-1">Logout</span>
                         </button>
                     </div>
                 </div>

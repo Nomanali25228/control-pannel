@@ -326,7 +326,7 @@ const { user, logout } = useAuth();
                     <FaSearch className="text-gray-400 dark:text-gray-500" />
                   </div>
                 </div>
-                <button  onClick={() => setShowModal(true)} className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center">
+                <button  onClick={() => setShowModal(true)} className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center">
                   <FaPlus className="mr-2" /> Add New Client
                 </button>
               </div>

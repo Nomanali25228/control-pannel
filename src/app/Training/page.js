@@ -358,7 +358,7 @@ useEffect(() => {
                 </div>
                 <button
                   onClick={() => setShowForm4(true)}
-                  className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-[10px] font-medium transition-colors flex items-center"
+                  className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-[10px] font-medium transition-colors flex items-center"
                 >
                   <FaPlus className="mr-2" /> Add New Training Record
                 </button>

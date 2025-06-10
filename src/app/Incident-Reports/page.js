@@ -334,7 +334,7 @@ const handleStatusChange = async (id, newStatus) => {
       </div>
       <button
         onClick={() => setShowModal2(true)}
-        className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
+        className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
       >
         <FaPlus className="mr-2" /> Report New Incident
       </button>

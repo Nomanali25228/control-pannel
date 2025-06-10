@@ -345,9 +345,9 @@ const Page = () => {
                 </div>
                 <button
                   onClick={() => setShowForm6(!showForm6)}
-                  className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
+                  className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
                 >
-                  <FaPlus className="mr-2" /> Add New User
+                  <FaPlus className="mr-2 " /> Add New User
                 </button>
               </div>
             </div>
@@ -356,7 +356,7 @@ const Page = () => {
                 <button
                   key={index}
                   onClick={() => setSelected(label)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${selected === label
+                  className={`px-3 py-1 rounded-full cursor-pointer text-sm font-medium transition-all ${selected === label
                     ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
                     : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                     }`}

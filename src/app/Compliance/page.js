@@ -352,10 +352,10 @@ useEffect(() => {
                 </div>
                 <button
                   onClick={handleToggleForm5}
-                  className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+                  className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-2 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                 >
                   <FaPlus className="mr-2" />
-                  Add Training Record
+                  Add Compliance Record
                 </button>
               </div>
             </div>
