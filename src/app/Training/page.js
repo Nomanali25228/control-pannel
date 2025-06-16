@@ -13,9 +13,9 @@ import {
   FaUserCog,
   FaSearch,
   FaPlus,
-  FaEye,
-  FaEdit,
-  FaTrash,
+  // FaEye,
+  // FaEdit,
+  // FaTrash,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
@@ -23,17 +23,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Optional for table format
 
-const StaffData = [
-  {
-    email: "nomigt6@gmail.com ",
-    name: "Noman Developer",
-    position: "Registered Nurse",
-    department: "Nursing",
-    startDate: "2023-05-10",
-    status: "Active",
-  },
-];
 
 const Page = () => {
 
@@ -86,6 +79,37 @@ const Page = () => {
     setShowForm4(true);
     setEditingUserId(training._id);
   };
+
+  
+
+const handleViewPdf = (item) => {
+  // Alert or modal to show data in UI
+  alert(`Full Name: ${item.fullName}\nEmail: ${item.email}\nPosition: ${item.position}\nDepartment: ${item.department}\nStart Date: ${item.startDate}`);
+};
+
+const handleDownloadPdf = async (item) => {
+  const jsPDF = (await import('jspdf')).default;
+  const autoTable = (await import('jspdf-autotable')).default;
+
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Training Records", 14, 15);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [["Field", "Value"]],
+    body: [
+      ["StaffName", item.staffMember.fullName],
+      ["TrainingType", item.trainingType],
+      ["CompletionDate", item.completionDate.slice(0, 10)],
+      ["ExpiryDatet", item.expiryDate.slice(0, 10)],
+      ["Notes", item.notes],
+    ]
+  });
+
+  doc.save(`${item.fullName}_details.pdf`);
+};
+
 
 
 
@@ -444,6 +468,12 @@ useEffect(() => {
                           <button className="   cursor-pointer hover:text-red-500 transition" onClick={() => handleDelete(item._id)}>
                             <FaTrash />
                           </button>
+                             <button
+                                className="hover:text-green-600 transition cursor-pointer"
+                                onClick={() => handleDownloadPdf(item)}
+                              >
+                                <FaDownload />
+                              </button>
                         </div>
                       </td>
                     </tr>
@@ -556,21 +586,24 @@ useEffect(() => {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    type="button"
-                    onClick={() => setShowForm4(false)}
-                    className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white font-bold py-2 px-4 rounded"
-                  >
-                    Add Record
-                  </button>
-                </div>
+                            <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+  {/* Left side: Download PDF */}
+
+  <div>
+    <button
+      type="button"
+      onClick={() => setShowModal3(false)}
+      className="modal-close bg-gray-300 cursor-pointer hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white font-bold py-2 px-4 rounded"
+    >
+ Add Record    </button>
+  </div>
+</div>
               </form>
             </div>
           )}

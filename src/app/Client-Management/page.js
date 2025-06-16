@@ -12,9 +12,9 @@ import {
   FaUserCog,
   FaSearch,
   FaPlus,
-  FaEye,
-  FaEdit,
-  FaTrash,
+  // FaEye,
+  // FaEdit,
+  // FaTrash,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
@@ -23,6 +23,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Optional for table format
 
 const clients = [
   {
@@ -101,6 +104,37 @@ const handleEdit = (client) => {
   setShowModal(true); // ✅ FIXED HERE
   setEditingUserId(client._id);
 };
+
+
+
+const handleViewPdf = (item) => {
+  // Alert or modal to show data in UI
+  alert(`Full Name: ${item.fullName}\nEmail: ${item.email}\nPosition: ${item.position}\nDepartment: ${item.department}\nStart Date: ${item.startDate}`);
+};
+
+const handleDownloadPdf = async (client) => {
+  const jsPDF = (await import('jspdf')).default;
+  const autoTable = (await import('jspdf-autotable')).default;
+
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Client Management", 14, 15);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [["Field", "Value"]],
+    body: [
+      ["Full Name", client.fullName],
+      ["Age", client.age],
+      ["Room", client.roomNumber],
+      ["CareType", client.careType],
+      ["AdmitDate", client.admissionDate?.slice(0, 10)],
+    ]
+  });
+
+  doc.save(`${client.fullName}_details.pdf`);
+};
+
 
   // Handle input changes
 
@@ -404,6 +438,12 @@ const { user, logout } = useAuth();
                         {/* <FaEye className="cursor-pointer hover:text-blue-500 transition" /> */}
                         <FaEdit  className="cursor-pointer hover:text-yellow-500 transition" onClick={() => handleEdit(client)}/>
                         <FaTrash className="   cursor-pointer hover:text-red-500 transition" onClick={() => handleDelete(client._id)}/>
+                          <button
+                           className="hover:text-green-600 transition cursor-pointer"
+                           onClick={() => handleDownloadPdf(client)}
+                         >
+                           <FaDownload />
+                         </button>
                       </td>
                     </tr>
                   ))}
@@ -507,13 +547,13 @@ const { user, logout } = useAuth();
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+                  className="bg-gray-300 hover:bg-gray-400 cursor-pointer dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded"
+      className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white font-bold py-2 px-4 rounded"
                 >
                   Add Client
                 </button>

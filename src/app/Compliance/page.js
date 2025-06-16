@@ -12,12 +12,15 @@ import {
   FaUserCog,
   FaSearch,
   FaPlus,
-  FaEye,
-  FaEdit,
-  FaTrash,
+  // FaEye,
+  // FaEdit,
+  // FaTrash,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Optional for table format
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
@@ -87,6 +90,45 @@ const Page = () => {
     setShowForm5(true); // ✅ FIXED HERE
     setEditingUserId(comp._id);
   };
+
+
+
+
+
+const handleViewPdf = (item) => {
+  // Alert or modal to show data in UI
+  alert(`Full Name: ${item.fullName}\nEmail: ${item.email}\nPosition: ${item.position}\nDepartment: ${item.department}\nStart Date: ${item.startDate}`);
+};
+
+const handleDownloadPdf = async (item) => {
+  const jsPDF = (await import('jspdf')).default;
+  const autoTable = (await import('jspdf-autotable')).default;
+
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Compliance Records", 14, 15);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [["Field", "Value"]],
+    body: [
+      ["Requirement", item.requirement],
+      ["Category", item.category],
+      ["LastReviewDate", item.lastReviewDate.slice(0, 10)],
+      ["NextReview", item.nextReviewDate.slice(0, 10)],
+      ["Status", item.status],
+      ["Notes", item.notes],
+    ]
+  });
+
+  doc.save(`${item.fullName}_details.pdf`);
+};
+
+
+
+
+
+
   const handleChange5 = (e) => {
     const { name, value } = e.target;
     setFormData5((prevData) => ({
@@ -172,28 +214,28 @@ const Page = () => {
   };
 
 
-useEffect(() => {
-  let filtered = StaffData;
+  useEffect(() => {
+    let filtered = StaffData;
 
-  // First filter based on selected status
-  if (selected !== "All Records") {
-    filtered = filtered.filter((staff) => staff.status === selected);
-  }
+    // First filter based on selected status
+    if (selected !== "All Records") {
+      filtered = filtered.filter((staff) => staff.status === selected);
+    }
 
-  // Then filter based on search query
-  if (searchQuery.trim() !== "") {
-    const query = searchQuery.toLowerCase();
-    filtered = filtered.filter((staff) =>
-      staff.requirement?.toLowerCase().includes(query) ||
-      staff.category?.toLowerCase().includes(query) ||
-      staff.status?.toLowerCase().includes(query) ||
-      staff.lastReviewDate?.toLowerCase().includes(query) ||
-      staff.nextReviewDate?.toLowerCase().includes(query)
-    );
-  }
+    // Then filter based on search query
+    if (searchQuery.trim() !== "") {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((staff) =>
+        staff.requirement?.toLowerCase().includes(query) ||
+        staff.category?.toLowerCase().includes(query) ||
+        staff.status?.toLowerCase().includes(query) ||
+        staff.lastReviewDate?.toLowerCase().includes(query) ||
+        staff.nextReviewDate?.toLowerCase().includes(query)
+      );
+    }
 
-  setFilteredStaff(filtered);
-}, [selected, searchQuery, StaffData]);
+    setFilteredStaff(filtered);
+  }, [selected, searchQuery, StaffData]);
 
 
 
@@ -255,69 +297,68 @@ useEffect(() => {
   return (
     <div className="bg-[#111827] min-h-screen">
       <Navbar />
-{/* Mobile Navbar Toggle */}
-<div className="lg:hidden flex items-center justify-end px-4 py-3 bg-white dark:bg-gray-800 shadow relative">
-  <h1 className="text-lg text-gray-900 dark:text-white font-semibold absolute left-4">
-    Compliance
-  </h1>
-  <button
-    onClick={() => setSidebarOpen(!sidebarOpen)}
-    className="text-gray-800 dark:text-white text-xl"
-  >
-    {sidebarOpen ? <FaTimes /> : <FaBars />}
-  </button>
-</div>
+      {/* Mobile Navbar Toggle */}
+      <div className="lg:hidden flex items-center justify-end px-4 py-3 bg-white dark:bg-gray-800 shadow relative">
+        <h1 className="text-lg text-gray-900 dark:text-white font-semibold absolute left-4">
+          Compliance
+        </h1>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-gray-800 dark:text-white text-xl"
+        >
+          {sidebarOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
 
-<div className="flex flex-1">
-  {/* Sidebar */}
-  <aside
-    className={`fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside
+          className={`fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
       ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:relative lg:block`}
-  >
-    <nav className="flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center lg:block">
-        <p className="text-sm text-gray-500 dark:text-gray-400">Navigation</p>
-      </div>
+        >
+          <nav className="flex flex-col h-full">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center lg:block">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Navigation</p>
+            </div>
 
-      <div className="flex-1 px-2 py-4 overflow-y-auto">
-        {navItems.map((item, index) => (
-          <Link
-            key={index}
-            href={item.href}
-            className={`side-menu-item flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-md transition-colors ${
-              item.active
-                ? "bg-primary-light dark:bg-gray-700 text-primary-light"
-                : "hover:bg-primary-light hover:text-primary dark:hover:bg-gray-700 dark:hover:text-primary-light"
-            }`}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <span className="mr-3">{item.icon}</span>
-            {item.label}
-          </Link>
-        ))}
-      </div>
+            <div className="flex-1 px-2 py-4 overflow-y-auto">
+              {navItems.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  className={`side-menu-item flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-md transition-colors ${item.active
+                      ? "bg-primary-light dark:bg-gray-700 text-primary-light"
+                      : "hover:bg-primary-light hover:text-primary dark:hover:bg-gray-700 dark:hover:text-primary-light"
+                    }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <span className="mr-3">{item.icon}</span>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
 
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#EEEEFF] flex items-center justify-center text-[#4A49B0] font-medium">
-            {user.fullName
-              .split(" ")
-              .map((word) => word[0])
-              .join("")
-              .toUpperCase()}
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-              {user.fullName}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {user.email}
-            </p>
-          </div>
-        </div>
-      </div>
-    </nav>
-  </aside>
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#EEEEFF] flex items-center justify-center text-[#4A49B0] font-medium">
+                  {user.fullName
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")
+                    .toUpperCase()}
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    {user.fullName}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </aside>
 
 
         {/* Main Content */}
@@ -367,8 +408,8 @@ useEffect(() => {
                   key={index}
                   onClick={() => setSelected(label)}
                   className={`px-3 py-1 rounded-full text-sm font-medium transition-all cursor-pointer backdrop-blur-sm ${selected === label
-                      ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
-                      : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
+                    ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
+                    : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                     }`}
                 >
                   {label}
@@ -420,6 +461,12 @@ useEffect(() => {
                           <button className="hover:text-red-500 transition    cursor-pointer" onClick={() => handleDelete(item._id)}>
                             <FaTrash />
                           </button>
+                                                  <button
+                                className="hover:text-green-600 transition cursor-pointer"
+                                onClick={() => handleDownloadPdf(item)}
+                              >
+                                <FaDownload />
+                              </button>
                         </div>
                       </td>
                     </tr>
@@ -539,23 +586,24 @@ useEffect(() => {
                   ></textarea>
                 </div>
 
-                <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div>
                   <button
                     type="button"
-                    onClick={handleCancel5}
-                    className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+                    onClick={() => setShowModal3(false)}
+                    className="modal-close bg-gray-300 cursor-pointer hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white font-bold py-2 px-4 rounded"
+                    className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white font-bold py-2 px-4 rounded"
                   >
-                    Add Record
+                    Add Staff Member
                   </button>
                 </div>
+            
               </form>
-            </div>
+      </div>
 
           )}
 
@@ -565,9 +613,9 @@ useEffect(() => {
 
 
 
-        </main>
-      </div>
-    </div>
+    </main>
+      </div >
+    </div >
   );
 };
 

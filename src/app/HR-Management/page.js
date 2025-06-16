@@ -13,8 +13,8 @@ import {
   FaSearch,
   FaPlus,
   FaEye,
-  FaEdit,
-  FaTrash,
+  // FaEdit,
+  // FaTrash,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
@@ -23,6 +23,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Optional for table format
 
 const StaffData = [
   {
@@ -76,17 +79,50 @@ const Page = () => {
     department: '',
     startDate: '',
   });
-  const handleEdit = (hr) => {
-    setFormData3({
-      name: hr.fullName,
-      email: hr.email,
-      position: hr.position,
-      department: hr.department,
-      startDate: hr.startDate?.slice(0, 10)
-    });
-    setShowModal3(true); // ✅ FIXED HERE
-    setEditingUserId(hr._id);
-  };
+const handleEdit = (hr) => {
+  console.log("handleEdit called with:", hr);
+  setFormData3({
+    name: hr.fullName,
+    email: hr.email,
+    position: hr.position,
+    department: hr.department,
+    startDate: hr.startDate?.slice(0, 10)
+  });
+  setShowModal3(true);
+  setEditingUserId(hr._id);
+};
+
+
+
+const handleViewPdf = (item) => {
+  // Alert or modal to show data in UI
+  alert(`Full Name: ${item.fullName}\nEmail: ${item.email}\nPosition: ${item.position}\nDepartment: ${item.department}\nStart Date: ${item.startDate}`);
+};
+
+const handleDownloadPdf = async (item) => {
+  const jsPDF = (await import('jspdf')).default;
+  const autoTable = (await import('jspdf-autotable')).default;
+
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("HR Management Details", 14, 15);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [["Field", "Value"]],
+    body: [
+      ["Full Name", item.fullName],
+      ["Email", item.email],
+      ["Position", item.position],
+      ["Department", item.department],
+      ["Start Date", item.startDate],
+    ]
+  });
+
+  doc.save(`${item.fullName}_details.pdf`);
+};
+
+
 
   const handleChange3 = (e) => {
     const { name, value } = e.target;
@@ -378,6 +414,12 @@ const Page = () => {
                           <button className="hover:text-red-500 transition    cursor-pointer" onClick={() => handleDelete(item._id)}>
                             <FaTrash />
                           </button>
+                           <button
+      className="hover:text-green-600 transition cursor-pointer"
+      onClick={() => handleDownloadPdf(item)}
+    >
+      <FaDownload />
+    </button>
                         </div>
                       </td>
                     </tr>
@@ -489,21 +531,25 @@ const Page = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal3(false)}
-                    className="modal-close bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded"
-                  >
-                    Add Staff Member
-                  </button>
-                </div>
+               <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+  {/* Left side: Download PDF */}
+
+  <div>
+    <button
+      type="button"
+      onClick={() => setShowModal3(false)}
+      className="modal-close bg-gray-300 cursor-pointer hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white font-bold py-2 px-4 rounded"
+    >
+      Add Staff Member
+    </button>
+  </div>
+</div>
               </form>
             </div>
           )}

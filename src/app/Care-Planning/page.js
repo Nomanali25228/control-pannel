@@ -12,12 +12,15 @@ import {
   FaUserCog,
   FaSearch,
   FaPlus,
-  FaEye,
-  FaEdit,
-  FaTrash,
+  // FaEye,
+  // FaEdit,
+  // FaTrash,
   FaBars,
   FaTimes,
 } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Optional for table format
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -86,6 +89,28 @@ const handleEditCare = (plan) => {
 };
 
 
+const handleDownloadPdf = async (item) => {
+  const jsPDF = (await import('jspdf')).default;
+  const autoTable = (await import('jspdf-autotable')).default;
+ const minu =staffMembers.find(staff => staff._id === item.client)?.fullName || "Unknown"
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Care Plans", 14, 15);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [["Field", "Value"]],
+    body: [
+      ["client", minu ],
+      ["planType", item.planType],
+      ["creationDate", item.creationDate.slice(0, 10)],
+      ["reviewDate", item.reviewDate.slice(0, 10)],
+      ["carePlanDetails", item.carePlanDetails],
+    ]
+  });
+
+  doc.save(`${item.fullName}_details.pdf`);
+};
 
 
 
@@ -374,6 +399,12 @@ const { user, logout } = useAuth();
                 {/* <FaEye className=  "hover:text-blue-500 transition   cursor-pointer" /> */}
                 <FaEdit className= "hover:text-yellow-500 transition cursor-pointer" onClick={() => handleEditCare(item)} />
                 <FaTrash className="hover:text-red-500 transition    cursor-pointer" onClick={() => handleDeleteCare(item._id)} />
+                           <button
+                    className="hover:text-green-600 transition cursor-pointer"
+                    onClick={() => handleDownloadPdf(item)}
+                  >
+                    <FaDownload />
+                  </button>
               </div>
             </td>
           </tr>
@@ -493,13 +524,13 @@ const { user, logout } = useAuth();
                 <button
                   type="button"
                   onClick={() => setShowFormCare(false)}
-                  className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+                  className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 cursor-pointer dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-bold py-2 px-4 rounded"
                 >
                   Create Care Plan
                 </button>
