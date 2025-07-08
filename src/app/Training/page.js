@@ -437,7 +437,7 @@ useEffect(() => {
                           </div>
                           <div>
                             <div className=" -px-2 text-[12px] font-medium text-gray-900 dark:text-white">
-                              {item.staffMember.fullName}
+                              {item.staffMember?.fullName}
                             </div>
                             <div className="text-sm text-gray-500 dark:text-gray-400">
                               { }

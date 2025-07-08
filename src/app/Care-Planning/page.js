@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Navbar from '../(component)/navbar/Navbar';
 import {
   FaThLarge,
@@ -12,7 +12,7 @@ import {
   FaUserCog,
   FaSearch,
   FaPlus,
-  // FaEye,
+  FaEye,
   // FaEdit,
   // FaTrash,
   FaBars,
@@ -26,6 +26,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import ViewData from '../(component)/viewData/ViewData';
 
 const CarePlans = [
   {
@@ -69,12 +70,19 @@ const [showFormCare, setShowFormCare] = useState(false);
             const [sidebarOpen, setSidebarOpen] = useState(false);
         const [staffMembers, setStaffMembers] = useState([]); // For HR/staff members
 
+
+// ViewData.apply...............................................................
+const [viewname, setViewName] = useState(null);
+
+
+
+
 const handleChangeCare = (e) => {
   const { name, value } = e.target;
   setFormDataCare(prev => ({ ...prev, [name]: value }));
 };
 const [selected, setSelected] = useState('All Plans');
-const filters = ['All Plans', 'Nursing', 'Nutrition', 'Mobility', 'Medication'];
+const filters = ['All Plans', 'Nursing', 'Nutrition', 'Mobility',];
 
 const handleEditCare = (plan) => {
   setFormDataCare({
@@ -93,6 +101,7 @@ const handleDownloadPdf = async (item) => {
   const jsPDF = (await import('jspdf')).default;
   const autoTable = (await import('jspdf-autotable')).default;
  const minu =staffMembers.find(staff => staff._id === item.client)?.fullName || "Unknown"
+
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text("Care Plans", 14, 15);
@@ -175,6 +184,8 @@ useEffect(() => {
   })
   .then(res => {
     setCarePlans(res.data);
+    console.log("Care Plans:", res.data);
+    
     setMessage('Care Plans fetched');
   })
   .catch(err => {
@@ -192,7 +203,7 @@ useEffect(() => {
   })
   .then(response => {
     setStaffMembers(response.data.clients);  // Staff data set
-    setMessage('Staff fetched successfully');
+        setMessage('Staff fetched successfully');
   })
   .catch(error => {
     setError(error.response?.data?.msg || 'Failed to fetch staff');
@@ -222,11 +233,21 @@ const { user, logout } = useAuth();
   if (!user) return null;
 
 
+// viewdata/..........................................
+const {showModal, setShowModal} = useAuth(); // Get showModal and setShowModal from AuthContext
+
+const handleView = (item) => {
+  setShowModal(true);
+};
 
 
   return (
     <div className="bg-[#111827] min-h-screen flex flex-col">
       <Navbar />
+{showModal && (
+  <ViewData
+  />
+)}
 
      {/* Mobile Navbar Toggle - only for smaller than lg */}
 <div className="lg:hidden flex items-center justify-end px-4 py-3 bg-white dark:bg-gray-800 shadow relative">
@@ -397,9 +418,19 @@ const { user, logout } = useAuth();
             <td className="px-3 sm:px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               <div className="flex space-x-1 sm:space-x-2">
                 {/* <FaEye className=  "hover:text-blue-500 transition   cursor-pointer" /> */}
-                <FaEdit className= "hover:text-yellow-500 transition cursor-pointer" onClick={() => handleEditCare(item)} />
-                <FaTrash className="hover:text-red-500 transition    cursor-pointer" onClick={() => handleDeleteCare(item._id)} />
-                           <button
+                <FaEye
+  className="hover:text-blue-500 transition cursor-pointer"
+  onClick={()=>handleView(item)}
+/>
+<FaEdit
+  className="hover:text-yellow-500 transition cursor-pointer"
+  onClick={() => handleEditCare(item)}
+/>
+<FaTrash
+  className="hover:text-red-500 transition cursor-pointer"
+  onClick={() => handleDeleteCare(item._id)}
+/>
+           <button
                     className="hover:text-green-600 transition cursor-pointer"
                     onClick={() => handleDownloadPdf(item)}
                   >
@@ -465,9 +496,11 @@ const { user, logout } = useAuth();
                   <option value="Nursing">Nursing</option>
                   <option value="Nutrition">Nutrition</option>
                   <option value="Mobility">Mobility</option>
-                  <option value="Medication">Medication</option>
                   <option value="Personal Care">Personal Care</option>
                   <option value="Social">Social</option>
+                  <option value="routine">routine</option>
+                  <option value="safety">safety</option>
+                  <option value="communication">communication</option>
                 </select>
               </div>
 
