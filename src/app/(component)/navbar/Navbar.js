@@ -25,11 +25,12 @@ function Navbar() {
         <div className="bg-white dark:bg-gray-800 shadow sticky top-0 z-40">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                 {/* Left section */}
-                <div className="flex items-center">
-                   
-                    <h1 className="text-2xl font-bold text-white dark:text-primary-light">Care Home Management</h1>
-                   
-                </div>
+               <div className="flex items-center">
+  <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white dark:text-primary-light">
+    Care Home Management
+  </h1>
+</div>
+
 
                 {/* Right section */}
                 <div className="flex items-center gap-4">

@@ -13,7 +13,7 @@ import {
   FaUserCog,
   FaSearch,
   FaPlus,
-  // FaEye,
+  FaEye,
   // FaEdit,
   // FaTrash,
   FaBars,
@@ -80,35 +80,35 @@ const Page = () => {
     setEditingUserId(training._id);
   };
 
-  
 
-const handleViewPdf = (item) => {
-  // Alert or modal to show data in UI
-  alert(`Full Name: ${item.fullName}\nEmail: ${item.email}\nPosition: ${item.position}\nDepartment: ${item.department}\nStart Date: ${item.startDate}`);
-};
 
-const handleDownloadPdf = async (item) => {
-  const jsPDF = (await import('jspdf')).default;
-  const autoTable = (await import('jspdf-autotable')).default;
+  const handleViewPdf = (item) => {
+    // Alert or modal to show data in UI
+    alert(`Full Name: ${item.fullName}\nEmail: ${item.email}\nPosition: ${item.position}\nDepartment: ${item.department}\nStart Date: ${item.startDate}`);
+  };
 
-  const doc = new jsPDF();
-  doc.setFontSize(16);
-  doc.text("Training Records", 14, 15);
+  const handleDownloadPdf = async (item) => {
+    const jsPDF = (await import('jspdf')).default;
+    const autoTable = (await import('jspdf-autotable')).default;
 
-  autoTable(doc, {
-    startY: 25,
-    head: [["Field", "Value"]],
-    body: [
-      ["StaffName", item.staffMember.fullName],
-      ["TrainingType", item.trainingType],
-      ["CompletionDate", item.completionDate.slice(0, 10)],
-      ["ExpiryDatet", item.expiryDate.slice(0, 10)],
-      ["Notes", item.notes],
-    ]
-  });
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Training Records", 14, 15);
 
-  doc.save(`${item.fullName}_details.pdf`);
-};
+    autoTable(doc, {
+      startY: 25,
+      head: [["Field", "Value"]],
+      body: [
+        ["StaffName", item.staffMember.fullName],
+        ["TrainingType", item.trainingType],
+        ["CompletionDate", item.completionDate.slice(0, 10)],
+        ["ExpiryDatet", item.expiryDate.slice(0, 10)],
+        ["Notes", item.notes],
+      ]
+    });
+
+    doc.save(`${item.fullName}_details.pdf`);
+  };
 
 
 
@@ -197,30 +197,30 @@ const handleDownloadPdf = async (item) => {
   }, []);
 
   // Filter staff whenever searchQuery or selected changes
-{/* Filtering Staff based on selection + searchQuery */}
-useEffect(() => {
-  const now = new Date();
+  {/* Filtering Staff based on selection + searchQuery */ }
+  useEffect(() => {
+    const now = new Date();
 
-  const filtered = StaffData.filter((staff) => {
-    const expiry = staff.expiryDate ? new Date(staff.expiryDate) : null;
-    if (!expiry) return false;
+    const filtered = StaffData.filter((staff) => {
+      const expiry = staff.expiryDate ? new Date(staff.expiryDate) : null;
+      if (!expiry) return false;
 
-    const diffInDays = (expiry - now) / (1000 * 60 * 60 * 24);
-    const fullName = staff.staffMember?.fullName?.toLowerCase() || "";
+      const diffInDays = (expiry - now) / (1000 * 60 * 60 * 24);
+      const fullName = staff.staffMember?.fullName?.toLowerCase() || "";
 
-    const matchesSelected =
-      selected === "All Records" ||
-      (selected === "Valid" && expiry > now && diffInDays > 30) ||
-      (selected === "Expiring Soon" && expiry > now && diffInDays <= 30) ||
-      (selected === "Expired" && expiry < now);
+      const matchesSelected =
+        selected === "All Records" ||
+        (selected === "Valid" && expiry > now && diffInDays > 30) ||
+        (selected === "Expiring Soon" && expiry > now && diffInDays <= 30) ||
+        (selected === "Expired" && expiry < now);
 
-    const matchesSearch = fullName.includes(searchQuery.toLowerCase());
+      const matchesSearch = fullName.includes(searchQuery.toLowerCase());
 
-    return matchesSelected && matchesSearch;
-  });
+      return matchesSelected && matchesSearch;
+    });
 
-  setFilteredStaff(filtered);
-}, [selected, StaffData, searchQuery]);
+    setFilteredStaff(filtered);
+  }, [selected, StaffData, searchQuery]);
 
 
 
@@ -278,6 +278,47 @@ useEffect(() => {
   if (!user) return null;
 
 
+  //  ["StaffName", item.staffMember.fullName],
+  //       ["TrainingType", item.trainingType],
+  //       ["CompletionDate", item.completionDate.slice(0, 10)],
+  //       ["ExpiryDatet", item.expiryDate.slice(0, 10)],
+  //       ["Notes", item.notes],
+
+
+  const [viewName, setViewName] = useState(null);
+  const [viewtrainingType, setViewTrainingType] = useState(null);
+  const [viewCompletionDate, setViewCompletionDate] = useState(null);
+  const [viewExpiryDate, setViewExpiryDate] = useState(null);
+  const [viewNotes, setViewNotes] = useState(null);
+
+
+
+
+  const [showModals, setShowModals] = useState(false);
+
+  const handleView = (client) => {
+    setViewName(client.staffMember.fullName);
+    setViewTrainingType(client.trainingType);
+    setViewCompletionDate(client.completionDate.slice(0, 10));
+    setViewExpiryDate(client.expiryDate.slice(0, 10));
+    setViewNotes(client.notes);
+    setShowModals(true);
+
+  };
+
+
+
+  const data = {
+    "Staff Name": viewName,
+    "Training Type": viewtrainingType,
+    "Completion Date": viewCompletionDate,
+    "Expiry Date": viewExpiryDate,
+    "Notes": viewNotes,
+
+
+  }
+
+
 
 
 
@@ -285,87 +326,125 @@ useEffect(() => {
     <div className="bg-[#111827] min-h-screen">
       <Navbar />
 
-      {/* Mobile Navbar Toggle */}
-<div className="lg:hidden flex items-center justify-end px-4 py-3 bg-white dark:bg-gray-800 shadow relative">
-  <h1 className="text-lg text-gray-900 dark:text-white font-semibold absolute left-4">
-    Training
-  </h1>
-  <button
-    onClick={() => setSidebarOpen(!sidebarOpen)}
-    className="text-gray-800 dark:text-white text-xl"
-  >
-    {sidebarOpen ? <FaTimes /> : <FaBars />}
-  </button>
-</div>
+      {/* view data /////////////////////////////////////////////// */}
+      {showModals && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-[#ffffff57] backdrop-blur-sm p-4 overflow-auto">
+          <div className="relative w-full max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 max-h-[90vh] overflow-hidden">
 
-<div className="flex flex-1">
-  {/* Sidebar */}
-  <aside
-    className={`fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
-      ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      lg:translate-x-0 lg:relative lg:block`}
-  >
-    <nav className="flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center lg:block">
-        <p className="text-sm text-gray-500 dark:text-gray-400">Navigation</p>
-      </div>
+            {/* ❌ Close Button */}
+            <button
+              onClick={() => setShowModals(false)}
+              className="absolute top-4 right-4 w-9 h-9 sm:w-10 sm:h-10 cursor-pointer rounded-full bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 hover:rotate-90 transition-all duration-300 flex items-center justify-center shadow-md"
+              aria-label="Close"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 sm:h-5 sm:w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
 
-      <div className="flex-1 px-2 py-4 overflow-y-auto">
-        {navItems.map((item, index) => (
-          <Link
-            key={index}
-            href={item.href}
-            className={`side-menu-item flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-md transition-colors ${
-              item.active
-                ? "bg-primary-light dark:bg-gray-700 text-primary-light"
-                : "hover:bg-primary-light hover:text-primary dark:hover:bg-gray-700 dark:hover:text-primary-light"
-            }`}
-            onClick={() => setSidebarOpen(false)} // close sidebar on mobile after click
-          >
-            <span className="mr-3">{item.icon}</span>
-            {item.label}
-          </Link>
-        ))}
-      </div>
+            {/* Heading */}
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6 text-center">
+              Training Record Details
+            </h2>
 
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#EEEEFF] flex items-center justify-center text-[#4A49B0] font-medium">
-            {user.fullName
-              .split(" ")
-              .map((word) => word[0])
-              .join("")
-              .toUpperCase()}
-          </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-              {user.fullName}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {user.email}
-            </p>
+            {/* Scrollable Content */}
+            <div className="space-y-4 sm:space-y-6 overflow-y-auto max-h-[60vh] pr-1 sm:pr-2">
+              {Object.entries(data).map(([field, value]) => (
+                <div key={field} className="flex justify-between border-b pb-2 sm:pb-3 text-xs sm:text-base md:text-lg">
+                  <span className="text-gray-900 font-bold">{field}</span>
+                  <span className="text-gray-600 text-right ml-24">{value}</span>
+                </div>
+              ))}
+            </div>
+
           </div>
         </div>
+
+      )}
+
+      {/* Mobile Navbar Toggle */}
+      <div className="lg:hidden flex items-center justify-end px-4 py-3 bg-white dark:bg-gray-800 shadow relative">
+        <h1 className="text-lg text-gray-900 dark:text-white font-semibold absolute left-4">
+          Training
+        </h1>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-gray-800 dark:text-white text-xl"
+        >
+          {sidebarOpen ? <FaTimes /> : <FaBars />}
+        </button>
       </div>
-    </nav>
-  </aside>
+
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside
+          className={`fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
+      ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      lg:translate-x-0 lg:relative lg:block`}
+        >
+          <nav className="flex flex-col h-full">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center lg:block">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Navigation</p>
+            </div>
+
+            <div className="flex-1 px-2 py-4 overflow-y-auto">
+              {navItems.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  className={`side-menu-item flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-md transition-colors ${item.active
+                    ? "bg-primary-light dark:bg-gray-700 text-primary-light"
+                    : "hover:bg-primary-light hover:text-primary dark:hover:bg-gray-700 dark:hover:text-primary-light"
+                    }`}
+                  onClick={() => setSidebarOpen(false)} // close sidebar on mobile after click
+                >
+                  <span className="mr-3">{item.icon}</span>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#EEEEFF] flex items-center justify-center text-[#4A49B0] font-medium">
+                  {user.fullName
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")
+                    .toUpperCase()}
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    {user.fullName}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 max-h-screen overflow-hidden">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">
             Training
           </h2>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8 h-full overflow-y-auto pr-2 my-scroll">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
-                  Training Records
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Track staff training and certifications
-                </p>
+                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Training Records</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Track staff training and certifications</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                 <div className="relative w-full sm:w-auto">
@@ -382,7 +461,7 @@ useEffect(() => {
                 </div>
                 <button
                   onClick={() => setShowForm4(true)}
-                  className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-[10px] font-medium transition-colors flex items-center"
+                  className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white px-4 py-2 rounded-md text-[10px] font-medium transition-colors flex items-center"
                 >
                   <FaPlus className="mr-2" /> Add New Training Record
                 </button>
@@ -396,8 +475,8 @@ useEffect(() => {
                   key={index}
                   onClick={() => setSelected(label)}
                   className={`px-3 py-1 rounded-full text-sm font-medium transition-all cursor-pointer backdrop-blur-sm ${selected === label
-                      ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
-                      : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
+                    ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
+                    : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
                     }`}
                 >
                   {label}
@@ -407,98 +486,77 @@ useEffect(() => {
 
             {/* Table */}
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <table className="min-w-[800px] md:min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    {[
-                      "Staff Member",
-                      "Training type",
-                      "Completion Date",
-                      "Expaire Date",
-                      "Status",
-                      "Actions",
-                    ].map((col, i) => (
-                      <th
-                        key={i}
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                      >
+                    {["Staff Member", "Training Type", "Completion Date", "Expiry Date", "Status", "Actions"].map((col, i) => (
+                      <th key={i} className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         {col}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredStaff.map((item, i) => (
-                    <tr key={i}>
-                      <td className="px-2 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-white text-blue-500 flex items-center justify-center rounded-full border dark:border-gray-600">
-                            {item.staffMember?.fullName?.split(" ").map(word => word[0]).join("").toUpperCase()}
-                          </div>
-                          <div>
-                            <div className=" -px-2 text-[12px] font-medium text-gray-900 dark:text-white">
-                              {item.staffMember?.fullName}
+                  {filteredStaff.length > 0 ? (
+                    filteredStaff.map((item, i) => (
+                      <tr key={i}>
+                        <td className="px-2 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-white text-blue-500 flex items-center justify-center rounded-full border dark:border-gray-600">
+                              {item.staffMember?.fullName?.split(" ").map(word => word[0]).join("").toUpperCase()}
                             </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              { }
+                            <div>
+                              <div className="text-[12px] font-medium text-gray-900 dark:text-white">{item.staffMember?.fullName}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400"></div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">
-                        {item.trainingType}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">
-                        {item.completionDate.slice(0, 10)}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">
-                        {item.expiryDate.slice(0, 10)}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">
-                        {"Active"}
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="flex space-x-2 text-gray-900 dark:text-white">
-                          {/* <button className="text-blue-500 hover:text-blue-700">
-                                                        <FaEye />
-                                                    </button> */}
-                          <button className="cursor-pointer hover:text-yellow-500 transition" onClick={() => handleEdit(item)}>
-                            <FaEdit />
-                          </button>
-                          <button className="   cursor-pointer hover:text-red-500 transition" onClick={() => handleDelete(item._id)}>
-                            <FaTrash />
-                          </button>
-                             <button
-                                className="hover:text-green-600 transition cursor-pointer"
-                                onClick={() => handleDownloadPdf(item)}
-                              >
-                                <FaDownload />
-                              </button>
-                        </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">{item.trainingType}</td>
+                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">{item.completionDate.slice(0, 10)}</td>
+                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">{item.expiryDate.slice(0, 10)}</td>
+                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-white">Active</td>
+                        <td className="px-4 py-4">
+                          <div className="flex space-x-2 text-gray-900 dark:text-white">
+                            <button className="hover:text-blue-500 transition cursor-pointer" onClick={() => handleView(item)}>
+                              <FaEye />
+                            </button>
+                            <button className="cursor-pointer hover:text-yellow-500 transition" onClick={() => handleEdit(item)}>
+                              <FaEdit />
+                            </button>
+                            <button className="cursor-pointer hover:text-red-500 transition" onClick={() => handleDelete(item._id)}>
+                              <FaTrash />
+                            </button>
+                            <button className="hover:text-green-600 transition cursor-pointer" onClick={() => handleDownloadPdf(item)}>
+                              <FaDownload />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="text-center px-4 sm:px-6 py-24 text-gray-500 dark:text-gray-400 text-sm">
+                        No staff found.
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
-              {filteredStaff.length === 0 && (
-                <p className="text-center px-4 sm:px-6 py-36 text-gray-500 dark:text-gray-400">
-                  No staff found.
-                </p>
-              )}
             </div>
           </div>
 
+          {/* Modal Form */}
           {showForm4 && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center  bg-black/50 bg-opacity-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4">
               <form
                 onSubmit={handleSubmit4}
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg"
               >
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Add Training Record</h2>
+
                 {/* Staff Member */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Staff Member
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Staff Member</label>
                   <select
                     name="staffName"
                     value={formData4.staffName}
@@ -513,15 +571,11 @@ useEffect(() => {
                       </option>
                     ))}
                   </select>
-
                 </div>
-
 
                 {/* Training Type */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Training Type
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Training Type</label>
                   <select
                     name="trainingType"
                     value={formData4.trainingType}
@@ -543,9 +597,7 @@ useEffect(() => {
 
                 {/* Completion Date */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Completion Date
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Completion Date</label>
                   <input
                     type="date"
                     name="completionDate"
@@ -558,9 +610,7 @@ useEffect(() => {
 
                 {/* Expiry Date */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Expiry Date
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Expiry Date</label>
                   <input
                     type="date"
                     name="expiryDate"
@@ -573,9 +623,7 @@ useEffect(() => {
 
                 {/* Notes */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Notes
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
                   <textarea
                     name="notes"
                     value={formData4.notes}
@@ -586,42 +634,25 @@ useEffect(() => {
                 </div>
 
                 {/* Buttons */}
-                            <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-  {/* Left side: Download PDF */}
-
-  <div>
-    <button
-      type="button"
-      onClick={() => setShowModal3(false)}
-      className="modal-close bg-gray-300 cursor-pointer hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
-    >
-      Cancel
-    </button>
-    <button
-      type="submit"
-      className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white font-bold py-2 px-4 rounded"
-    >
- Add Record    </button>
-  </div>
-</div>
+                <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    type="button"
+                    onClick={() => setShowForm4(false)}
+                    className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white font-bold py-2 px-4 rounded"
+                  >
+                    Add Record
+                  </button>
+                </div>
               </form>
             </div>
           )}
-
-
-
-
-
-
-
-
-
-
-
-
-
         </main>
-
 
 
 

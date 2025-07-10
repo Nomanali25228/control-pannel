@@ -322,277 +322,260 @@ const Page = () => {
   </aside>
 
 
-        <main className="flex-1 p-6">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">User Management</h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-              <div>
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">System Users</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Manage user accounts and permissions</p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <div className="relative w-full sm:w-auto">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 dark:border-gray-600 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
-                    placeholder="Search staff..."
-                  />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaSearch className="text-gray-400 dark:text-gray-500" />
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowForm6(!showForm6)}
-                  className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
-                >
-                  <FaPlus className="mr-2 " /> Add New User
-                </button>
-              </div>
-            </div>
-            <div className="mb-6 flex text-white flex-wrap gap-2">
-              {filters.map((label, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelected(label)}
-                  className={`px-3 py-1 rounded-full cursor-pointer text-sm font-medium transition-all ${selected === label
-                    ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
-                    : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
-                    }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    {["Name", "Email", "Role", "Actions"].map((col, i) => (
-                      <th
-                        key={i}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                      >
-                        {col}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredStaff.map((item, i) => (
-                    <tr key={i}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-white text-blue-500 flex items-center justify-center rounded-full border dark:border-gray-600">
-                            {item.fullName.split(' ').map(word => word[0]).join('').toUpperCase()}
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">{item.fullName}</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">{item.position}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{item.email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{item.role}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex space-x-2 text-gray-900 dark:text-white">
-                          {/* <button className="text-blue-500 hover:text-blue-700"><FaEye /></button> */}
-                          <button
-                            className="hover:text-yellow-500 transition cursor-pointer"
-                            onClick={() => handleEdit(item)}
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className="hover:text-red-500 transition    cursor-pointer"
-                            onClick={() => handleDelete(item._id)}
-                          >
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {filteredStaff.length === 0 && (
-                <p className="text-center px-4 sm:px-6 py-36 text-gray-500 dark:text-gray-400">No staff found.</p>
-              )}
-            </div>
-          </div>
-          {/* User Roles Panel */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">User Roles</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Admin */}
-              <div className="p-4 bg-primary-light dark:bg-gray-700 rounded-lg">
-                <h4 className="font-medium text-white dark:text-primary-light mb-2">Admin</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Full system access with user management capabilities
-                </p>
-                <ul className="mt-2 text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                  <li>• Manage all users and staff</li>
-                  <li>• Create and delete records</li>
-                  <li>• Access all system features</li>
-                  <li>• Configure system settings</li>
-                </ul>
-              </div>
+<main className="flex-1 p-6 max-h-screen overflow-hidden">
+  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">User Management</h2>
 
-              {/* Staff */}
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Staff</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Basic access for care home employees</p>
-                <ul className="mt-2 text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                  <li>• View and create care plans</li>
-                  <li>• Report incidents</li>
-                  <li>• Update client records</li>
-                  <li>• View schedules</li>
-                </ul>
-              </div>
-
-              {/* Client/Family */}
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Client/Family</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Limited access for clients and family members</p>
-                <ul className="mt-2 text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                  <li>• View care plans</li>
-                  <li>• View activities schedule</li>
-                  <li>• Submit requests</li>
-                  <li>• Complete satisfaction surveys</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-
-
-
-          {showForm6 && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center  bg-black/50 bg-opacity-50">
-              <form
-                id="add-user-form"
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg"
-                onSubmit={handleSubmit6}
-              >
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                    Full Name
-                  </label>
-                  <input
-
-                    id="user-name"
-                    name="name"
-                    type="text"
-                    required
-                    value={formData6.name}
-                    onChange={handleChange6}
-                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    id="user-email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData6.email}
-                    onChange={handleChange6}
-                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="role" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                    Role
-                  </label>
-                  <select
-                    id="role"
-                    name="role"
-                    required
-                    value={formData6.role}
-                    onChange={handleChange6}
-                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-500"
-                  >
-                    <option value="">Select Role</option>
-                    <option value="Admin">Administrator</option>
-                    <option value="Staff">Staff</option>
-                    <option value="Client">Client</option>
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData6.password}
-                    onChange={handleChange6}
-                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="confirmPassword" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                    Confirm Password
-                  </label>
-                  <input
-                    id="confirm-password"
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    value={formData6.confirmPassword}
-                    onChange={handleChange6}
-                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    type="button"
-                    onClick={() => setShowForm6(false)}
-                    className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white font-bold py-2 px-4 rounded"
-                  >
-                    Add User
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        </main>
+  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8 h-full overflow-y-auto pr-2 my-scroll">
+    {/* Header */}
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div>
+        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">System Users</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Manage user accounts and permissions</p>
       </div>
+      <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+        <div className="relative w-full sm:w-auto">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+            placeholder="Search staff..."
+          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FaSearch className="text-gray-400 dark:text-gray-500" />
+          </div>
+        </div>
+        <button
+          onClick={() => setShowForm6(!showForm6)}
+          className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
+        >
+          <FaPlus className="mr-2" /> Add New User
+        </button>
+      </div>
+    </div>
+
+    {/* Filters */}
+    <div className="mb-6 flex text-white flex-wrap gap-2">
+      {filters.map((label, index) => (
+        <button
+          key={index}
+          onClick={() => setSelected(label)}
+          className={`px-3 py-1 rounded-full cursor-pointer text-sm font-medium transition-all ${
+            selected === label
+              ? "bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg"
+              : "bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light"
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+
+    {/* Table */}
+    <div className="overflow-x-auto">
+      <table className="min-w-[800px] md:min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            {["Name", "Email", "Role", "Actions"].map((col, i) => (
+              <th key={i} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                {col}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          {filteredStaff.length > 0 ? (
+            filteredStaff.map((item, i) => (
+              <tr key={i}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white text-blue-500 flex items-center justify-center rounded-full border dark:border-gray-600">
+                      {item.fullName.split(' ').map(word => word[0]).join('').toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">{item.fullName}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{item.position}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{item.email}</td>
+                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{item.role}</td>
+                <td className="px-6 py-4">
+                  <div className="flex space-x-2 text-gray-900 dark:text-white">
+                    <button className="hover:text-yellow-500 transition cursor-pointer" onClick={() => handleEdit(item)}>
+                      <FaEdit />
+                    </button>
+                    <button className="hover:text-red-500 transition cursor-pointer" onClick={() => handleDelete(item._id)}>
+                      <FaTrash />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="text-center px-4 sm:px-6 py-24 text-gray-500 dark:text-gray-400 text-sm">
+                No staff found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+
+  {/* Modal */}
+  {showForm6 && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4">
+      <form
+        id="add-user-form"
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg"
+        onSubmit={handleSubmit6}
+      >
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
+            Full Name
+          </label>
+          <input
+            id="user-name"
+            name="name"
+            type="text"
+            required
+            value={formData6.name}
+            onChange={handleChange6}
+            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
+            Email Address
+          </label>
+          <input
+            id="user-email"
+            name="email"
+            type="email"
+            required
+            value={formData6.email}
+            onChange={handleChange6}
+            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="role" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
+            Role
+          </label>
+          <select
+            id="role"
+            name="role"
+            required
+            value={formData6.role}
+            onChange={handleChange6}
+            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600"
+          >
+            <option value="">Select Role</option>
+            <option value="Admin">Administrator</option>
+            <option value="Staff">Staff</option>
+            <option value="Client">Client</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            value={formData6.password}
+            onChange={handleChange6}
+            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="confirmPassword" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
+            Confirm Password
+          </label>
+          <input
+            id="confirm-password"
+            name="confirmPassword"
+            type="password"
+            required
+            value={formData6.confirmPassword}
+            onChange={handleChange6}
+            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600"
+          />
+        </div>
+
+        <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+          <button
+            type="button"
+            onClick={() => setShowForm6(false)}
+            className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+          >
+            Cancel
+          </button>
+          <button type="submit" className="bg-[#4a48d4] hover:bg-[#4A49B0] text-white font-bold py-2 px-4 rounded">
+            Add User
+          </button>
+        </div>
+      </form>
+    </div>
+  )}
+</main>
+      </div>
+      {/* Roles Panel */}
+  {/* Roles Panel */}
+<div className="mt-6">
+  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">User Roles</h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Admin */}
+      <div className="p-4 bg-primary-light dark:bg-gray-700 rounded-lg">
+        <h4 className="font-medium text-white dark:text-primary-light mb-2">Admin</h4>
+        <p className="text-sm text-gray-100 dark:text-gray-300">Full system access with user management capabilities</p>
+        <ul className="mt-2 text-sm text-gray-100 dark:text-gray-300 space-y-1 list-disc list-inside">
+          <li>Manage all users and staff</li>
+          <li>Create and delete records</li>
+          <li>Access all system features</li>
+          <li>Configure system settings</li>
+        </ul>
+      </div>
+
+      {/* Staff */}
+      <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+        <h4 className="font-medium text-gray-800 dark:text-white mb-2">Staff</h4>
+        <p className="text-sm text-gray-700 dark:text-gray-300">Basic access for care home employees</p>
+        <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1 list-disc list-inside">
+          <li>View and create care plans</li>
+          <li>Report incidents</li>
+          <li>Update client records</li>
+          <li>View schedules</li>
+        </ul>
+      </div>
+
+      {/* Client */}
+      <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+        <h4 className="font-medium text-gray-800 dark:text-white mb-2">Client/Family</h4>
+        <p className="text-sm text-gray-700 dark:text-gray-300">Limited access for clients and family members</p>
+        <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1 list-disc list-inside">
+          <li>View care plans</li>
+          <li>View activities schedule</li>
+          <li>Submit requests</li>
+          <li>Complete satisfaction surveys</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     </div>
   );
 };

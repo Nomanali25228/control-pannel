@@ -651,7 +651,7 @@ toast.success("Add successfuly")
 
   
         {/* Main Dashboard Content */}
-        <main className="flex-1 bg-gray-100 dark:bg-gray-900 p-6">
+        <main className="flex-1 bg-gray-100 overflow-y-hidden dark:bg-gray-900 p-6">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">Dashboard</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1 */}

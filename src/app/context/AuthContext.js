@@ -1,5 +1,4 @@
 'use client';
-import { set } from 'nprogress';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 const AuthContext = createContext();
@@ -10,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Prevent early rendering
   const [totalclientlength, setTotalClientLength] = useState(0);
   const [jaa, setJaa] = useState(false);
-const [showModal, setShowModal] = useState(false); // For viewData modal
+
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
@@ -47,9 +46,7 @@ const [showModal, setShowModal] = useState(false); // For viewData modal
     totalclientlength,
     setTotalClientLength,
     jaa,
-    setJaa,
-    setShowModal,
-    showModal,
+    setJaa
   }), [user, token, totalclientlength, jaa]);
 
   // ✅ Wait until token/user are checked

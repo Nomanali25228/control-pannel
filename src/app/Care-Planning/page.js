@@ -1,5 +1,5 @@
 'use client';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../(component)/navbar/Navbar';
 import {
   FaThLarge,
@@ -26,7 +26,6 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import ViewData from '../(component)/viewData/ViewData';
 
 const CarePlans = [
   {
@@ -37,6 +36,10 @@ const CarePlans = [
     status: 'Current',
   },
 ];
+
+
+
+
 
 const Page = () => {
  
@@ -72,7 +75,6 @@ const [showFormCare, setShowFormCare] = useState(false);
 
 
 // ViewData.apply...............................................................
-const [viewname, setViewName] = useState(null);
 
 
 
@@ -81,6 +83,7 @@ const handleChangeCare = (e) => {
   const { name, value } = e.target;
   setFormDataCare(prev => ({ ...prev, [name]: value }));
 };
+
 const [selected, setSelected] = useState('All Plans');
 const filters = ['All Plans', 'Nursing', 'Nutrition', 'Mobility',];
 
@@ -123,8 +126,7 @@ const handleDownloadPdf = async (item) => {
 
 
 
-
- const handleSubmitCare = (e) => {
+const handleSubmitCare = (e) => {
   e.preventDefault();
   const token = localStorage.getItem('token');
   const config = { headers: { Authorization: `Bearer ${token}` } };
@@ -233,21 +235,84 @@ const { user, logout } = useAuth();
   if (!user) return null;
 
 
-// viewdata/..........................................
-const {showModal, setShowModal} = useAuth(); // Get showModal and setShowModal from AuthContext
+{/* view data /////////////////////////////////////////////// */}
+
+const [showModal, setShowModal] = useState(false);
+const [viewName, setViewName] = useState(null);
+const [viewplanType, setViewPlanType] = useState(null);
+const [viewCreationDate, setViewCreationDate] = useState(null); 
+const [viewReviewDate, setViewReviewDate] = useState(null);                                                                           
+const [viewCarePlanDetails, setViewCarePlanDetails] = useState(null);
 
 const handleView = (item) => {
-  setShowModal(true);
+   const minu =staffMembers.find(staff => staff._id === item.client)?.fullName || "Unknown"
+  setViewName(minu);
+  setViewPlanType(item.planType);
+  setViewCreationDate(item.creationDate.slice(0, 10));
+  setViewReviewDate(item.reviewDate.slice(0, 10));
+  setViewCarePlanDetails(item.carePlanDetails); 
+  setShowModal(!showModal);
 };
 
+
+
+const data = {
+  "client": viewName,
+  "plan Type": viewplanType,
+  "creation Date": viewCreationDate,
+  "review Date": viewReviewDate, 
+  "care Plan Details": viewCarePlanDetails,
+ 
+  
+}
 
   return (
     <div className="bg-[#111827] min-h-screen flex flex-col">
       <Navbar />
+
+       {/* view data /////////////////////////////////////////////// */}
 {showModal && (
-  <ViewData
-  />
+  <div className="fixed inset-0 z-50 flex justify-center items-center bg-[#ffffff57] backdrop-blur-sm p-4 overflow-auto">
+  <div className="relative w-full max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 max-h-[90vh] overflow-hidden">
+
+    {/* ❌ Close Button */}
+    <button
+      onClick={() => setShowModal(false)}
+      className="absolute top-4 right-4 w-9 h-9 sm:w-10 sm:h-10 cursor-pointer rounded-full bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 hover:rotate-90 transition-all duration-300 flex items-center justify-center shadow-md"
+      aria-label="Close"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-4 w-4 sm:h-5 sm:w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    {/* Heading */}
+    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6 text-center">
+      Care Plan Details
+    </h2>
+
+    {/* Scrollable Content */}
+    <div className="space-y-4 sm:space-y-6 overflow-y-auto max-h-[60vh] pr-1 sm:pr-2">
+      {Object.entries(data).map(([field, value]) => (
+        <div key={field} className="flex justify-between border-b pb-2 sm:pb-3 text-xs sm:text-base md:text-lg">
+          <span className="text-gray-900 font-bold">{field}</span>
+          <span className="text-gray-600 text-right ml-24">{value}</span>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</div>
+
 )}
+
 
      {/* Mobile Navbar Toggle - only for smaller than lg */}
 <div className="lg:hidden flex items-center justify-end px-4 py-3 bg-white dark:bg-gray-800 shadow relative">
@@ -302,7 +367,7 @@ const handleView = (item) => {
           </div>
           <div className="ml-3">
             <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user.fullName}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400"> {user.email}</p>
           </div>
         </div>
       </div>
@@ -311,273 +376,236 @@ const handleView = (item) => {
 
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-6">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">Care Planning</h2>
+<main className="flex-1 p-6 max-h-screen overflow-hidden">
+  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 hidden md:block">
+    Care Planning
+  </h2>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 mb-8">
-  {/* Header */}
-  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-    <div>
-      <h3 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">Care Plans</h3>
-      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Create and manage care plans</p>
-    </div>
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
-      <div className="relative w-full sm:w-auto">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full sm:min-w-[200px] rounded-md border border-gray-300 dark:border-gray-600 pl-10 pr-4 py-2 focus:border-primary dark:focus:border-primary-light focus:ring-primary dark:focus:ring-primary-light dark:bg-gray-700 dark:text-white text-sm"
-          placeholder="Search clients..."
-        />
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <FaSearch className="text-gray-400 dark:text-gray-500" />
-        </div>
+  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 mb-8 h-full overflow-y-auto pr-2 my-scroll">
+    {/* Header */}
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div>
+        <h3 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">Care Plans</h3>
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Create and manage care plans</p>
       </div>
-      <button
-        onClick={() => setShowFormCare(true)}
-        className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
-      >
-        <FaPlus className="mr-2" /> Create New Plan
-      </button>
-    </div>
-  </div>
-
-  {/* Filters */}
-  <div className="mb-6 flex text-white flex-wrap gap-2">
-    {filters.map((label, index) => (
-      <button
-        key={index}
-        onClick={() => setSelected(label)}
-        className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer backdrop-blur-sm ${
-          selected === label
-            ? 'bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg'
-            : 'bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light'
-        }`}
-      >
-        {label}
-      </button>
-    ))}
-  </div>
-
-  {/* Table */}
-  <div className="overflow-x-auto">
-    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
-      <thead className="bg-gray-50 dark:bg-gray-700">
-        <tr>
-          {['Client', 'Plan Type', 'Created', 'Review Date', 'Status', 'Actions'].map((col, i) => (
-            <th
-              key={i}
-              className="px-3 sm:px-4 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-            >
-              {col}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-        {filteredStaff.map((item, i) => (
-          <tr key={i}>
-            {/* Client */}
-            <td className="px-3 sm:px-6 py-3 whitespace-nowrap">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white text-blue-500 flex items-center justify-center rounded-full text-xs sm:text-sm font-semibold">
-                  {
-                    (staffMembers.find(staff => staff._id === item.client)?.fullName || "U")
-                      .split(" ")
-                      .map(word => word[0])
-                      .join("")
-                      .toUpperCase()
-                  }
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-900 dark:text-white">
-                    {staffMembers.find(staff => staff._id === item.client)?.fullName || "Unknown"}
-                  </div>
-                </div>
-              </div>
-            </td>
-
-            {/* Plan Type */}
-            <td className="px-3 sm:px-4 py-3 text-sm text-gray-900 dark:text-white">{item.planType}</td>
-
-            {/* Created Date */}
-            <td className="px-3 sm:px-4 py-3 text-[11px] text-gray-500 dark:text-gray-400">{item.creationDate.slice(0, 10)}</td>
-
-            {/* Review Date */}
-            <td className="px-3 sm:px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{item.reviewDate.slice(0, 10)}</td>
-
-            {/* Status */}
-            <td className="px-3 sm:px-4 py-3 text-sm">
-              <span className="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-green-100 text-green-800">
-                Active
-              </span>
-            </td>
-
-            {/* Actions */}
-            <td className="px-3 sm:px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-              <div className="flex space-x-1 sm:space-x-2">
-                {/* <FaEye className=  "hover:text-blue-500 transition   cursor-pointer" /> */}
-                <FaEye
-  className="hover:text-blue-500 transition cursor-pointer"
-  onClick={()=>handleView(item)}
-/>
-<FaEdit
-  className="hover:text-yellow-500 transition cursor-pointer"
-  onClick={() => handleEditCare(item)}
-/>
-<FaTrash
-  className="hover:text-red-500 transition cursor-pointer"
-  onClick={() => handleDeleteCare(item._id)}
-/>
-           <button
-                    className="hover:text-green-600 transition cursor-pointer"
-                    onClick={() => handleDownloadPdf(item)}
-                  >
-                    <FaDownload />
-                  </button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-    {filteredStaff.length === 0 && (
-      <p className="text-center px-4 sm:px-6 py-24 sm:py-36 text-sm text-gray-500 dark:text-gray-400">No staff found.</p>
-    )}
-  </div>
-</div>
-
-   {/* Modal care plane form */}
-      {showFormCare && (
-        <div className="fixed inset-0  bg-black/50 z-50 flex justify-center items-center">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
-            <form id="add-care-plan-form" className="p-4" onSubmit={handleSubmitCare}>
-              {/* Client ID */}
-              <div className="mb-4">
-                <label htmlFor="clientId" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  Client
-                </label>
-                <select
-                  id="client"
-                  name="client"
-                  value={formDataCare.client}
-                  onChange={handleChangeCare}
-                  required
-                  className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select Client</option>
-                    {staffMembers  // Staff data set
-.map((client) => (
-      <option key={client._id} value={client._id}>
-        {client.fullName} 
-      </option>
-    ))}
-                 
-                </select>
-                <input type="hidden" name="clientName" id="clientName" value={formDataCare.client.fullName} />
-              </div>
-
-              {/* Plan Type */}
-              <div className="mb-4">
-                <label htmlFor="planType" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  Plan Type
-                </label>
-                <select
-                  id="planType"
-                  name="planType"
-                  value={formDataCare.planType}
-                  onChange={handleChangeCare}
-                  required
-                  className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
-                >
-                  <option value="">Select Plan Type</option>
-                  <option value="Nursing">Nursing</option>
-                  <option value="Nutrition">Nutrition</option>
-                  <option value="Mobility">Mobility</option>
-                  <option value="Personal Care">Personal Care</option>
-                  <option value="Social">Social</option>
-                  <option value="routine">routine</option>
-                  <option value="safety">safety</option>
-                  <option value="communication">communication</option>
-                </select>
-              </div>
-
-              {/* Creation Date */}
-              <div className="mb-4">
-                <label htmlFor="createDate" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  Creation Date
-                </label>
-                <input
-                  id="creationDate"
-                  name="creationDate"
-                  type="date"
-                  value={formDataCare.creationDate}
-                  onChange={handleChangeCare}
-                  required
-                  className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
-                />
-              </div>
-
-              {/* Review Date */}
-              <div className="mb-4">
-                <label htmlFor="reviewDate" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  Review Date
-                </label>
-                <input
-                  id="reviewDate"
-                  name="reviewDate"
-                  type="date"
-                  value={formDataCare.reviewDate
-                  }
-                  onChange={handleChangeCare}
-                  required
-                  className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
-                />
-              </div>
-
-              {/* Care Plan Details */}
-              <div className="mb-4">
-                <label htmlFor="details" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  Care Plan Details
-                </label>
-                <textarea
-                  id="carePlanDetails"
-                  name="carePlanDetails"
-                  rows="4"
-                  value={formDataCare.carePlanDetails}
-                  onChange={handleChangeCare}
-                  className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
-                ></textarea>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button
-                  type="button"
-                  onClick={() => setShowFormCare(false)}
-                  className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 cursor-pointer dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-bold py-2 px-4 rounded"
-                >
-                  Create Care Plan
-                </button>
-              </div>
-            </form>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
+        <div className="relative w-full sm:w-auto">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full sm:min-w-[200px] rounded-md border border-gray-300 dark:border-gray-600 pl-10 pr-4 py-2 focus:border-primary dark:focus:border-primary-light focus:ring-primary dark:focus:ring-primary-light dark:bg-gray-700 dark:text-white text-sm"
+            placeholder="Search clients..."
+          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FaSearch className="text-gray-400 dark:text-gray-500" />
           </div>
         </div>
+        <button
+          onClick={() => setShowFormCare(true)}
+          className="bg-[#4a48d4] hover:bg-[#4A49B0] cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center"
+        >
+          <FaPlus className="mr-2" /> Create New Plan
+        </button>
+      </div>
+    </div>
+
+    {/* Filters */}
+    <div className="mb-6 flex text-white flex-wrap gap-2 ">
+      {filters.map((label, index) => (
+        <button
+          key={index}
+          onClick={() => setSelected(label)}
+          className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer backdrop-blur-sm ${
+            selected === label
+              ? 'bg-primary-light text-primary dark:bg-gray-700 dark:text-primary-light shadow-lg'
+              : 'bg-gray-100 hover:bg-primary-light dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light'
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+
+    <div className="overflow-x-auto">
+    {/* Table */}
+      <table className="min-w-[800px] md:min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
+        <thead className="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            {['Client', 'Plan Type', 'Created', 'Review Date', 'Status', 'Actions'].map((col, i) => (
+              <th
+                key={i}
+                className="px-3 sm:px-4 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
+                {col}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          {filteredStaff.map((item, i) => (
+            <tr key={i}>
+              <td className="px-3 sm:px-6 py-3 whitespace-nowrap">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white text-blue-500 flex items-center justify-center rounded-full text-xs sm:text-sm font-semibold">
+                    {
+                      (staffMembers.find(staff => staff._id === item.client)?.fullName || "U")
+                        .split(" ")
+                        .map(word => word[0])
+                        .join("")
+                        .toUpperCase()
+                    }
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                      {staffMembers.find(staff => staff._id === item.client)?.fullName || "Unknown"}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td className="px-3 sm:px-4 py-3 text-sm text-gray-900 dark:text-white">{item.planType}</td>
+              <td className="px-3 sm:px-4 py-3 text-[11px] text-gray-500 dark:text-gray-400">
+                {item.creationDate.slice(0, 10)}
+              </td>
+              <td className="px-3 sm:px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                {item.reviewDate.slice(0, 10)}
+              </td>
+              <td className="px-3 sm:px-4 py-3 text-sm">
+                <span className="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-green-100 text-green-800">
+                  Active
+                </span>
+              </td>
+              <td className="px-3 sm:px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                <div className="flex space-x-1 sm:space-x-2">
+                  <FaEye className="hover:text-blue-500 transition cursor-pointer" onClick={() => handleView(item)} />
+                  <FaEdit className="hover:text-yellow-500 transition cursor-pointer" onClick={() => handleEditCare(item)} />
+                  <FaTrash className="hover:text-red-500 transition cursor-pointer" onClick={() => handleDeleteCare(item._id)} />
+                  <button className="hover:text-green-600 transition cursor-pointer" onClick={() => handleDownloadPdf(item)}>
+                    <FaDownload />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {filteredStaff.length === 0 && (
+        <p className="text-center px-4 sm:px-6 py-24 sm:py-36 text-sm text-gray-500 dark:text-gray-400">No staff found.</p>
       )}
+    </div>
+  </div>
 
+  {/* Modal care plan form */}
+  {showFormCare && (
+    <div className="fixed inset-0 bg-black/50 z-50 overflow-auto flex justify-center items-center">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
+        <form id="add-care-plan-form" className="p-4" onSubmit={handleSubmitCare}>
+          {/* Client ID */}
+          <div className="mb-4">
+            <label htmlFor="clientId" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">Client</label>
+            <select
+              id="client"
+              name="client"
+              value={formDataCare.client}
+              onChange={handleChangeCare}
+              required
+              className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
+            >
+              <option value="">Select Client</option>
+              {staffMembers.map(client => (
+                <option key={client._id} value={client._id}>{client.fullName}</option>
+              ))}
+            </select>
+            <input type="hidden" name="clientName" id="clientName" value={formDataCare.client.fullName} />
+          </div>
 
+          {/* Plan Type */}
+          <div className="mb-4">
+            <label htmlFor="planType" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">Plan Type</label>
+            <select
+              id="planType"
+              name="planType"
+              value={formDataCare.planType}
+              onChange={handleChangeCare}
+              required
+              className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
+            >
+              <option value="">Select Plan Type</option>
+              <option value="Nursing">Nursing</option>
+              <option value="Nutrition">Nutrition</option>
+              <option value="Mobility">Mobility</option>
+              <option value="Personal Care">Personal Care</option>
+              <option value="Social">Social</option>
+              <option value="routine">Routine</option>
+              <option value="safety">Safety</option>
+              <option value="communication">Communication</option>
+            </select>
+          </div>
 
+          {/* Creation Date */}
+          <div className="mb-4">
+            <label htmlFor="createDate" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">Creation Date</label>
+            <input
+              id="creationDate"
+              name="creationDate"
+              type="date"
+              value={formDataCare.creationDate}
+              onChange={handleChangeCare}
+              required
+              className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
+            />
+          </div>
 
+          {/* Review Date */}
+          <div className="mb-4">
+            <label htmlFor="reviewDate" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">Review Date</label>
+            <input
+              id="reviewDate"
+              name="reviewDate"
+              type="date"
+              value={formDataCare.reviewDate}
+              onChange={handleChangeCare}
+              required
+              className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
+            />
+          </div>
 
-        </main>
+          {/* Details */}
+          <div className="mb-4">
+            <label htmlFor="details" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">Care Plan Details</label>
+            <textarea
+              id="carePlanDetails"
+              name="carePlanDetails"
+              rows="4"
+              value={formDataCare.carePlanDetails}
+              onChange={handleChangeCare}
+              className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary"
+            ></textarea>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+            <button
+              type="button"
+              onClick={() => setShowFormCare(false)}
+              className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 cursor-pointer dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded mr-2"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-bold py-2 px-4 rounded"
+            >
+              Create Care Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )}
+</main>
+
       </div>
     </div>
   );
