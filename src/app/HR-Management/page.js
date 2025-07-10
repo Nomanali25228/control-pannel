@@ -59,17 +59,16 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selected, setSelected] = useState("All Staff");
   const filters = ["All Staff", "Nursing", "Care", "Administration", "Management"];
-
-
-
-
   // Define your navigation links here with proper routes
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
-
-
-
+  const [editingUserId, setEditingUserId] = useState(null); // track if editing
+  const [ viewName, setViewName ] = useState(null);
+  const [viewemail, setViewEmail] = useState(null);
+  const [viewposition, setViewPosition] = useState(null);
+  const [viewdepartment, setViewDepartment] = useState(null);
+  const [viewstartDate, setViewStartDate] = useState(null);
+  const [showModals, setShowModals] = useState(false);
   // add staf -------------------------------------------------------------------------------------------------------------
   const [showModal3, setShowModal3] = useState(false);
   const [formData3, setFormData3] = useState({
@@ -131,7 +130,6 @@ const Page = () => {
 
 
 
-  const [editingUserId, setEditingUserId] = useState(null); // track if editing
 
 
 
@@ -259,12 +257,6 @@ const Page = () => {
 
 
 
-const [ viewName, setViewName ] = useState(null);
-const [viewemail, setViewEmail] = useState(null);
-const [viewposition, setViewPosition] = useState(null);
-const [viewdepartment, setViewDepartment] = useState(null);
-const [viewstartDate, setViewStartDate] = useState(null);
-const [showModals, setShowModals] = useState(false);
 
 const handleView = (client) => {
   setViewName(client.fullName);

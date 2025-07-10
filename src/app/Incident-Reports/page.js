@@ -66,6 +66,15 @@ const Page = () => {
     incidentDetails: '',
     status: 'Open',
   });
+  
+  const [viewClient, setViewClient] = useState(null);
+  const [viewStatus, setViewStatus] = useState(null);
+  const [viewIncidentDetails, setViewIncidentDetails] = useState(null); 
+  const [viewReportedBy, setViewReportedBy] = useState(null);                                                                           
+  const [viewSeverity, setViewSeverity] = useState(null);
+  const [viewIncidentType, setViewIncidentType] = useState(null);
+  const [viewdate, setViewdate] = useState(null);
+  const [showModals, setShowModals] = useState(false);
   const [editingIncidentId, setEditingIncidentId] = useState(null);
 
   const router = useRouter();
@@ -273,15 +282,6 @@ const handleDownloadPdf = async (item) => {
   if (!user) return null;
 
 
-
-const [viewClient, setViewClient] = useState(null);
-const [viewStatus, setViewStatus] = useState(null);
-const [viewIncidentDetails, setViewIncidentDetails] = useState(null); 
-const [viewReportedBy, setViewReportedBy] = useState(null);                                                                           
-const [viewSeverity, setViewSeverity] = useState(null);
-const [viewIncidentType, setViewIncidentType] = useState(null);
-const [viewdate, setViewdate] = useState(null);
-const [showModals, setShowModals] = useState(false);
 
 const handleView = (item) => {
   setViewClient(item.client.fullName);
