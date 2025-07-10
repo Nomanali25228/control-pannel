@@ -66,7 +66,7 @@ const Page = () => {
   const [selected, setSelected] = useState("All Records");
   const filters = ["All Records", "Compliant", "Action Required", "Upcoming"];
   const [showForm5, setShowForm5] = useState(false);
-
+  
   // Define your navigation links here with proper routes
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -78,6 +78,14 @@ const Page = () => {
     status: '',
     notes: ''
   });
+  const [viewrequirement, setViewRequirement] = useState(null);
+   const [viewcategory, setViewCategory] = useState(null);   
+  const [viewlastReviewDate, setViewLastReviewDate] = useState(null);
+  const [viewnextReviewDate, setViewNextReviewDate] = useState(null);
+  const [viewstatus, setViewStatus] = useState(null);
+  const [viewnotes, setViewNotes] = useState(null);
+  const [showModals, setShowModals] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null); // track if editing
   const handleEdit = (comp) => {
     setFormData5({
       requirement: comp.requirement,
@@ -140,7 +148,6 @@ const handleDownloadPdf = async (item) => {
   const handleToggleForm5 = () => {
     setShowForm5(!showForm5);
   };
-  const [editingUserId, setEditingUserId] = useState(null); // track if editing
 
 
   const handleCancel5 = () => {
@@ -293,25 +300,13 @@ const handleDownloadPdf = async (item) => {
 
   if (!user) return null;
 
-  // ["Requirement", item.requirement],
-  //     ["Category", item.category],
-  //     ["LastReviewDate", item.lastReviewDate.slice(0, 10)],
-  //     ["NextReview", item.nextReviewDate.slice(0, 10)],
-  //     ["Status", item.status],
-  //     ["Notes", item.notes],
- const [viewrequirement, setViewRequirement] = useState(null);
-  const [viewcategory, setViewCategory] = useState(null);   
-const [viewlastReviewDate, setViewLastReviewDate] = useState(null);
-const [viewnextReviewDate, setViewNextReviewDate] = useState(null);
-const [viewstatus, setViewStatus] = useState(null);
-const [viewnotes, setViewNotes] = useState(null);
+  
 
 
 
 
 
 
-const [showModals, setShowModals] = useState(false);
 
 const handleView = (client) => {
 

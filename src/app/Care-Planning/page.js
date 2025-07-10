@@ -71,7 +71,15 @@ const [message, setMessage] = useState('');
 const [error, setError] = useState('');
 const [showFormCare, setShowFormCare] = useState(false);
             const [sidebarOpen, setSidebarOpen] = useState(false);
+            
+            const [showModal, setShowModal] = useState(false);
+            const [viewName, setViewName] = useState(null);
+            const [viewplanType, setViewPlanType] = useState(null);
+            const [viewCreationDate, setViewCreationDate] = useState(null); 
+            const [viewReviewDate, setViewReviewDate] = useState(null);                                                                           
+            const [viewCarePlanDetails, setViewCarePlanDetails] = useState(null);
         const [staffMembers, setStaffMembers] = useState([]); // For HR/staff members
+        const [selected, setSelected] = useState('All Plans');
 
 
 // ViewData.apply...............................................................
@@ -84,7 +92,6 @@ const handleChangeCare = (e) => {
   setFormDataCare(prev => ({ ...prev, [name]: value }));
 };
 
-const [selected, setSelected] = useState('All Plans');
 const filters = ['All Plans', 'Nursing', 'Nutrition', 'Mobility',];
 
 const handleEditCare = (plan) => {
@@ -236,13 +243,6 @@ const { user, logout } = useAuth();
 
 
 {/* view data /////////////////////////////////////////////// */}
-
-const [showModal, setShowModal] = useState(false);
-const [viewName, setViewName] = useState(null);
-const [viewplanType, setViewPlanType] = useState(null);
-const [viewCreationDate, setViewCreationDate] = useState(null); 
-const [viewReviewDate, setViewReviewDate] = useState(null);                                                                           
-const [viewCarePlanDetails, setViewCarePlanDetails] = useState(null);
 
 const handleView = (item) => {
    const minu =staffMembers.find(staff => staff._id === item.client)?.fullName || "Unknown"

@@ -61,23 +61,24 @@ const Page = () => {
   ];
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [StaffData, setStaffData] = useState([]);
+  
+  
+    const [editingUserId, setEditingUserId] = useState(null); // track if editing
+    const [viewName, setViewName] = useState(null);
+    const [viewroom, setViewroom] = useState(null);
+    const [viewCaretype, setViewCaretype] = useState(null); 
+    const [viewadmitted, setViewAdmitted] = useState(null);                                                                           
+    const [viewage, setViewage] = useState(null);
+    const [showModals, setShowModals] = useState(false);
   const [filteredStaff, setFilteredStaff] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selected, setSelected] = useState("All Clients");
   const filters = ["All Clients", "Nursing", "Residential", "Memory Care", "Respite"];
   const [totalclientlength, setTotalClientLength] = useState(0);
-
-  console.log("Total Clients:", totalclientlength);
-
-
-  // Define your navigation links here with proper routes
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
   // add client --------------------------
-
   const [showModal, setShowModal] = useState(false);
-
   // Form data state
   const [formData, setFormData] = useState({
     name: '',
@@ -86,6 +87,9 @@ const Page = () => {
     careType: '',
     admitDate: '',
   });
+
+
+  // Define your navigation links here with proper routes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -140,9 +144,6 @@ const Page = () => {
 
   // Optional: Handle form submit
 
-
-
-  const [editingUserId, setEditingUserId] = useState(null); // track if editing
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -260,12 +261,6 @@ const Page = () => {
 
 
 
-const [viewName, setViewName] = useState(null);
-const [viewroom, setViewroom] = useState(null);
-const [viewCaretype, setViewCaretype] = useState(null); 
-const [viewadmitted, setViewAdmitted] = useState(null);                                                                           
-const [viewage, setViewage] = useState(null);
-const [showModals, setShowModals] = useState(false);
 
 const handleView = (client) => {
   setViewName(client.fullName);

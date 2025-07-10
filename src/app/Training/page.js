@@ -47,18 +47,19 @@ const Page = () => {
   const [filteredStaff, setFilteredStaff] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selected, setSelected] = useState('All Records');
-  const filters = ['All Records', 'Valid', 'Expiring Soon', 'Expired'];
-
   const [staffMembers, setStaffMembers] = useState([]); // For HR/staff members
-
-
-
+  const [viewName, setViewName] = useState(null);
+  const [viewtrainingType, setViewTrainingType] = useState(null);
+  const [viewCompletionDate, setViewCompletionDate] = useState(null);
+  const [viewExpiryDate, setViewExpiryDate] = useState(null);
+  const [viewNotes, setViewNotes] = useState(null);
+  const [showModals, setShowModals] = useState(false);
+  const { user, logout } = useAuth();
   // Define your navigation links here with proper routes
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
-
   const [showForm4, setShowForm4] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null); // track if editing
   const [formData4, setFormData4] = useState({
     staffName: '',
     trainingType: '',
@@ -66,6 +67,12 @@ const Page = () => {
     expiryDate: '',
     notes: '',
   });
+  const filters = ['All Records', 'Valid', 'Expiring Soon', 'Expired'];
+
+
+  
+  
+
 
 
   const handleEdit = (training) => {
@@ -121,7 +128,6 @@ const Page = () => {
 
 
 
-  const [editingUserId, setEditingUserId] = useState(null); // track if editing
 
 
 
@@ -268,7 +274,6 @@ const Page = () => {
 
 
 
-  const { user, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -278,23 +283,13 @@ const Page = () => {
   if (!user) return null;
 
 
-  //  ["StaffName", item.staffMember.fullName],
-  //       ["TrainingType", item.trainingType],
-  //       ["CompletionDate", item.completionDate.slice(0, 10)],
-  //       ["ExpiryDatet", item.expiryDate.slice(0, 10)],
-  //       ["Notes", item.notes],
-
-
-  const [viewName, setViewName] = useState(null);
-  const [viewtrainingType, setViewTrainingType] = useState(null);
-  const [viewCompletionDate, setViewCompletionDate] = useState(null);
-  const [viewExpiryDate, setViewExpiryDate] = useState(null);
-  const [viewNotes, setViewNotes] = useState(null);
+ 
 
 
 
 
-  const [showModals, setShowModals] = useState(false);
+
+
 
   const handleView = (client) => {
     setViewName(client.staffMember.fullName);

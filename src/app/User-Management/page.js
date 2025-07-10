@@ -75,24 +75,24 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selected, setSelected] = useState('All Users');
   const filters = ['All Users', 'admin', 'staff', 'client'];
-
-
-
-
-  // Define your navigation links here with proper routes
-
-
   const [showForm6, setShowForm6] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [editingUserId, setEditingUserId] = useState(null); // track if editing
   const [formData6, setFormData6] = useState({
     name: '',
     email: '',
     role: 'Client',
     password: '',
     confirmPassword: '',
-  });
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  });  
 
+
+
+
+  // Define your navigation links here with proper routes
+
+  
 
   const handleChange6 = (e) => {
     const { name, value } = e.target;
@@ -118,7 +118,6 @@ const Page = () => {
 
 
 
-  const [editingUserId, setEditingUserId] = useState(null); // track if editing
 
   const handleSubmit6 = (e) => {
     e.preventDefault();
